@@ -3,15 +3,21 @@ import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import os
 
 st.set_page_config(layout="wide")
 st.title("📊 Amazon Sales Report Dashboard")
 
 @st.cache_data
 def load_data():
-    # Changed path
-    df = pd.read_excel("data/Amazon Sale Report.xlsx")
-    return df
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    data_path = os.path.join(current_dir, "data", "Amazon_Sale_Report.xlsx")
+    print(f"Looking for file at: {data_path}")  # Check Streamlit logs for this
+    
+    if not os.path.exists(data_path):
+        raise FileNotFoundError(f"File not found at: {data_path}")
+    
+    return pd.read_excel(data_path)
 
     df = df.drop(columns=["index", "Unnamed: 22", "promotion-ids", "fulfilled-by"])
     df = df.dropna(subset=['Amount', 'Qty'])
