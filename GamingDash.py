@@ -34,7 +34,7 @@ def load_gaming_data():
     
     return pd.read_csv(data_path)  # Read CSV
 
-   df = load_gaming_data()  # Load gaming data
+    df = load_gaming_data()  # Load gaming data
 
     # Clean and engineer features
     df['Has In-App Purchases'] = df['In-app Purchases'].notna()
