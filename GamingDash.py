@@ -7,6 +7,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
 from wordcloud import WordCloud
 import streamlit as st
+import os
 
 # -------------------------
 # Dashboard Setup
@@ -19,10 +20,19 @@ st.title("📱 Game Monetization & Success Analysis")
 # -------------------------
 @st.cache_data
 def load_data():
-    # Changed path
-    file_path = "data/Copy of appstore_games.xlsx"
-    df = pd.read_excel(file_path)
-    return df
+    # Get absolute path to the data file
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    data_path = os.path.join(current_dir, "data", "appstore_games.csv")  # Changed to .csv
+    
+    # Debugging - check Streamlit logs for this
+    print(f"🔍 Looking for game data at: {data_path}")  
+    print(f"📁 Directory contents: {os.listdir(os.path.join(current_dir, 'data'))}")
+    
+    # Verify file exists
+    if not os.path.exists(data_path):
+        raise FileNotFoundError(f"❌ Game data file not found at: {data_path}")
+    
+    return pd.read_csv(data_path)  # Changed to read_csv instead of read_excel
     
     # Clean and engineer features
     df['Has In-App Purchases'] = df['In-app Purchases'].notna()
