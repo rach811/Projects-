@@ -1,7 +1,9 @@
-seaborn
-matplotlib
-pandas
-streamlit
-plotly
-scikit-learn
+pandas>=2.0.3
+matplotlib>=3.7.1
+seaborn>=0.12.2
+scikit-learn>=1.3.0
+wordcloud>=1.9.2
+streamlit>=1.25.0
+openpyxl>=3.1.2  # For Excel support in pandas
+numpy>=1.24.3    # Required by sklearn/matplotlib
 
