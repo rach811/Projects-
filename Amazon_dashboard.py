@@ -9,16 +9,23 @@ st.set_page_config(layout="wide")
 st.title("📊 Amazon Sales Report Dashboard")
 
 @st.cache_data
-def load_data():
+def load_amazon_data():
+    # Get path directly in 'main' (no 'data' subfolder)
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    data_path = os.path.join(current_dir, "data", "Amazon_Sale_Report.xlsx")
-    print(f"Looking for file at: {data_path}")  # Check Streamlit logs for this
+    data_path = os.path.join(current_dir, "Amazon_Sale_Report.xlsx")  # Updated path
     
+    # Debugging (check Streamlit logs)
+    print(f"🔍 Looking for Amazon data at: {data_path}")  
+    print(f"📂 Directory contents: {os.listdir(current_dir)}")  # Lists files in 'main'
+    
+    # Verify file exists
     if not os.path.exists(data_path):
-        raise FileNotFoundError(f"File not found at: {data_path}")
+        raise FileNotFoundError(f"❌ Amazon data file not found at: {data_path}")
     
-    return pd.read_excel(data_path)
+    return pd.read_excel(data_path)  # Still reading Excel
 
+    df = load_amazon_data()
+    
     df = df.drop(columns=["index", "Unnamed: 22", "promotion-ids", "fulfilled-by"])
     df = df.dropna(subset=['Amount', 'Qty'])
     df = df[(df['Qty'] > 0) & (df['Amount'] > 0)]
