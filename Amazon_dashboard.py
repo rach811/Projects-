@@ -12,7 +12,7 @@ st.title("📊 Amazon Sales Report Dashboard")
 def load_amazon_data():
     # Get path directly in 'main' (no 'data' subfolder)
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    data_path = os.path.join(current_dir, "Amazon_Sale_Report.xlsx")  # Updated path
+    data_path = os.path.join(current_dir, "Amazon Sale Report.xlsx")  # Updated path
     
     # Debugging (check Streamlit logs)
     st.write(f"🔍 Looking for Amazon data at: {data_path}")  
