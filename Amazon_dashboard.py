@@ -15,17 +15,16 @@ def load_amazon_data():
     data_path = os.path.join(current_dir, "Amazon_Sale_Report.xlsx")  # Updated path
     
     # Debugging (check Streamlit logs)
-    print(f"🔍 Looking for Amazon data at: {data_path}")  
-    print(f"📂 Directory contents: {os.listdir(current_dir)}")  # Lists files in 'main'
+    st.write(f"🔍 Looking for Amazon data at: {data_path}")  
+    st.write(f"📂 Directory contents: {os.listdir(current_dir)}")  # Lists files in 'main'
     
     # Verify file exists
     if not os.path.exists(data_path):
         raise FileNotFoundError(f"❌ Amazon data file not found at: {data_path}")
     
-    return pd.read_excel(data_path)  # Still reading Excel
-
-    df = load_amazon_data()
+    df = pd.read_excel(data_path)  # Still reading Excel
     
+    # Data cleaning and processing
     df = df.drop(columns=["index", "Unnamed: 22", "promotion-ids", "fulfilled-by"])
     df = df.dropna(subset=['Amount', 'Qty'])
     df = df[(df['Qty'] > 0) & (df['Amount'] > 0)]
@@ -34,16 +33,18 @@ def load_amazon_data():
     df["Revenue_per_Unit"] = df["Amount"] / df["Qty"]
     
     df['Customer_Proxy'] = (
-    df['ship-postal-code'].fillna('').astype(str) + '_' +
-    df['ship-city'].fillna('').astype(str)
-)
+        df['ship-postal-code'].fillna('').astype(str) + '_' +
+        df['ship-city'].fillna('').astype(str)
+    )
 
     df['Month'] = df['Date'].dt.to_period('M').astype(str)
     df['Month_Num'] = df['Date'].dt.month
     df['Weekday'] = df['Date'].dt.day_name()
+    
     return df
 
-df = load_data()
+# Load the data
+df = load_amazon_data() 
 
 # Sidebar filter
 st.sidebar.header("Filters")
