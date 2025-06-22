@@ -19,21 +19,26 @@ st.title("📱 Game Monetization & Success Analysis")
 # Data Loading and Preparation
 # -------------------------
 @st.cache_data
-def load_data():
-    # Get absolute path to the data file
+import os
+import pandas as pd
+
+def load_gaming_data():
+    # Get absolute path to the data file in main directory
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    data_path = os.path.join(current_dir, "data", "appstore_games.csv")  # Changed to .csv
+    data_path = os.path.join(current_dir, "appstore_games.csv")  # Directly in main
     
     # Debugging - check Streamlit logs for this
     print(f"🔍 Looking for game data at: {data_path}")  
-    print(f"📁 Directory contents: {os.listdir(os.path.join(current_dir, 'data'))}")
+    print(f"📁 Directory contents: {os.listdir(current_dir)}")  # Lists main directory
     
     # Verify file exists
     if not os.path.exists(data_path):
         raise FileNotFoundError(f"❌ Game data file not found at: {data_path}")
     
-    return pd.read_csv(data_path)  # Changed to read_csv instead of read_excel
-    
+    return pd.read_csv(data_path)  # Read CSV
+
+   df = load_gaming_data()  # Load gaming data
+
     # Clean and engineer features
     df['Has In-App Purchases'] = df['In-app Purchases'].notna()
     df['Is Free'] = df['Price'] == 0.0
