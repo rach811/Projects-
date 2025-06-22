@@ -19,8 +19,10 @@ st.title("📱 Game Monetization & Success Analysis")
 # -------------------------
 @st.cache_data
 def load_data():
-    file_path = "Downloads/Copy of appstore_games.xlsx"
+    # Changed path
+    file_path = "data/appstore_games.xlsx"
     df = pd.read_excel(file_path)
+    return df
     
     # Clean and engineer features
     df['Has In-App Purchases'] = df['In-app Purchases'].notna()
