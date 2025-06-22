@@ -22,29 +22,51 @@ st.title("📱 Game Monetization & Success Analysis")
 def load_gaming_data():
     # Get absolute path to the data file in main directory
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    data_path = os.path.join(current_dir, "appstore_games.csv")  # Directly in main
+    data_path = os.path.join(current_dir, "appstore_games.csv")
     
-    # Debugging - check Streamlit logs for this
+    # Debugging
     st.write(f"🔍 Looking for game data at: {data_path}")  
-    st.write(f"📁 Directory contents: {os.listdir(current_dir)}")  # Lists main directory
+    st.write(f"📁 Directory contents: {os.listdir(current_dir)}")
     
     # Verify file exists
     if not os.path.exists(data_path):
         raise FileNotFoundError(f"❌ Game data file not found at: {data_path}")
     
-    # Load the data first
-    df = pd.read_csv(data_path)
+    # Load the data with specific date parsing
+    try:
+        df = pd.read_csv(
+            data_path,
+            parse_dates=['Original Release Date', 'Current Version Release Date'],
+            date_format='%d/%m/%Y',  # Try different formats if needed
+            dayfirst=True,  # Important for day/month formats
+            infer_datetime_format=True  # Let pandas figure it out
+        )
+    except Exception as e:
+        st.error(f"❌ Error reading CSV: {str(e)}")
+        # Try without date parsing as fallback
+        df = pd.read_csv(data_path)
+        st.warning("⚠️ Loading without automatic date parsing. Attempting manual conversion.")
+        
+        # Manual date conversion
+        for col in ['Original Release Date', 'Current Version Release Date']:
+            try:
+                df[col] = pd.to_datetime(df[col], errors='coerce', dayfirst=True)
+            except:
+                st.warning(f"⚠️ Could not convert {col} to datetime")
     
     # Clean and engineer features
-    # Convert to datetime (was missing in your code)
-    df['Original Release Date'] = pd.to_datetime(df['Original Release Date'])
-    df['Current Version Release Date'] = pd.to_datetime(df['Current Version Release Date'])
-    
     df['Has In-App Purchases'] = df['In-app Purchases'].notna()
     df['Is Free'] = df['Price'] == 0.0
     df['User Rating Count'] = df['User Rating Count'].fillna(0)
     df['Average User Rating'] = df['Average User Rating'].fillna(0)
-    df['Year'] = df['Original Release Date'].dt.year
+    
+    # Extract year safely
+    if 'Original Release Date' in df and pd.api.types.is_datetime64_any_dtype(df['Original Release Date']):
+        df['Year'] = df['Original Release Date'].dt.year
+        df['Year'] = df['Year'].fillna(0).astype(int)
+    else:
+        st.warning("⚠️ Could not create 'Year' column. 'Original Release Date' is not datetime.")
+        df['Year'] = 0  # Default value
     
     # Handle genres
     df['Primary Genre'] = df['Primary Genre'].fillna('Unknown')
@@ -60,8 +82,12 @@ def load_gaming_data():
         if pd.isna(iap) or iap == '':
             return 0.0
         try:
-            prices = [float(p.strip()) for p in str(iap).split(',')]
-            return min(prices)
+            # Handle different formats: comma-separated or single value
+            if ',' in str(iap):
+                prices = [float(p.strip()) for p in str(iap).split(',')]
+                return min(prices)
+            else:
+                return float(iap)
         except:
             return 0.0
     
@@ -69,8 +95,15 @@ def load_gaming_data():
     
     return df
 
-# Corrected call to load_gaming_data
-df = load_gaming_data()  # Changed from load_data() to load_gaming_data()
+# Load data with error handling
+try:
+    df = load_gaming_data()
+    st.success("✅ Gaming data loaded successfully!")
+    st.write("Data preview:")
+    st.dataframe(df.head())
+except Exception as e:
+    st.error(f"🚨 Error loading gaming data: {str(e)}")
+    st.stop()
 
 # -------------------------
 # Sidebar Filters
