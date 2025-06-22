@@ -25,18 +25,21 @@ def load_gaming_data():
     data_path = os.path.join(current_dir, "appstore_games.csv")  # Directly in main
     
     # Debugging - check Streamlit logs for this
-    print(f"🔍 Looking for game data at: {data_path}")  
-    print(f"📁 Directory contents: {os.listdir(current_dir)}")  # Lists main directory
+    st.write(f"🔍 Looking for game data at: {data_path}")  
+    st.write(f"📁 Directory contents: {os.listdir(current_dir)}")  # Lists main directory
     
     # Verify file exists
     if not os.path.exists(data_path):
         raise FileNotFoundError(f"❌ Game data file not found at: {data_path}")
     
-    return pd.read_csv(data_path)  # Read CSV
-
-    df = load_gaming_data()  # Load gaming data
-
+    # Load the data first
+    df = pd.read_csv(data_path)
+    
     # Clean and engineer features
+    # Convert to datetime (was missing in your code)
+    df['Original Release Date'] = pd.to_datetime(df['Original Release Date'])
+    df['Current Version Release Date'] = pd.to_datetime(df['Current Version Release Date'])
+    
     df['Has In-App Purchases'] = df['In-app Purchases'].notna()
     df['Is Free'] = df['Price'] == 0.0
     df['User Rating Count'] = df['User Rating Count'].fillna(0)
@@ -66,7 +69,8 @@ def load_gaming_data():
     
     return df
 
-df = load_data()
+# Corrected call to load_gaming_data
+df = load_gaming_data()  # Changed from load_data() to load_gaming_data()
 
 # -------------------------
 # Sidebar Filters
