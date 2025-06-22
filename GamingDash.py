@@ -20,7 +20,7 @@ st.title("📱 Game Monetization & Success Analysis")
 @st.cache_data
 def load_data():
     # Changed path
-    file_path = "data/appstore_games.xlsx"
+    file_path = "data/Copy_of_appstore_games.xlsx"
     df = pd.read_excel(file_path)
     return df
     
