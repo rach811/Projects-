@@ -9,7 +9,10 @@ st.title("📊 Amazon Sales Report Dashboard")
 
 @st.cache_data
 def load_data():
-    df = pd.read_excel("Downloads/archive/Amazon Sale Report.xlsx")
+    # Changed path
+    df = pd.read_excel("data/Amazon Sale Report.xlsx")
+    return df
+
     df = df.drop(columns=["index", "Unnamed: 22", "promotion-ids", "fulfilled-by"])
     df = df.dropna(subset=['Amount', 'Qty'])
     df = df[(df['Qty'] > 0) & (df['Amount'] > 0)]
