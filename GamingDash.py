@@ -19,9 +19,6 @@ st.title("📱 Game Monetization & Success Analysis")
 # Data Loading and Preparation
 # -------------------------
 @st.cache_data
-import os
-import pandas as pd
-
 def load_gaming_data():
     # Get absolute path to the data file in main directory
     current_dir = os.path.dirname(os.path.abspath(__file__))
